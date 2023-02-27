@@ -78,3 +78,15 @@ def shanchu_td(request):
     # Test.objects.all().delete()
 
     return HttpResponse("<p>删除成功</p>")
+
+
+def tianjia_book(request):
+    from Wings import models
+    # 通过实例化对象的save方法存储到数据库
+    book = models.Book(title="嘎啦嘎啦", price=300, publish="呼啦出版社", pub_date="2022-09-06")
+    book.save()
+    # 通过orm提供的objects方法create来实现
+    books = models.Book.objects.create(title="阿里嘎多", price=200, publish="呼啦出版社", pub_date="2023-01-01")
+    print(books, type(books))
+    return HttpResponse("<p>ok</p>")
+

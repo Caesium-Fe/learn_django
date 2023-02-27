@@ -11,5 +11,6 @@ urlpatterns = [
     path(r'chaxun/', views.chaxun_td, name='chaxun'),
     path(r'xiugai/', views.xiugai_td, name='xiugai'),
     path(r'shanchu/', views.shanchu_td, name='shanchu'),
+    path(r'biaodan/', views.biaodan, name='biaodan_1'),
 ]
 
