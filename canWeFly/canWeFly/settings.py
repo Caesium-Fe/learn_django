@@ -46,6 +46,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Wings.GrowUp.MiddleWare'
 ]
 
 ROOT_URLCONF = 'canWeFly.urls'
@@ -94,14 +95,14 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         # 项目上线时,需要调整这里的路径
-        "LOCATION": "redis://127.0.0.1:6379/0",
+        "LOCATION": "redis://192.168.174.131:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
                "max_connections": 1000,
                "encoding": 'utf-8'
             },
-            "PASSWORD": "123456"  # 如果设置了登录密码，那么这里写密码
+            "PASSWORD": "123321"  # 如果设置了登录密码，那么这里写密码
         }
     },
 }

@@ -25,3 +25,7 @@ urlpatterns = [
     # url(r'^book/', include('Wings.urls')),
     path('Wins/', include("Wings.urls")),
 ]
+
+websocket_urlpatterns = [
+    path('ws/chat', views.ChatConsumer.as_asgi())
+]
