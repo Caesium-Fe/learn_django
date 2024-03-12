@@ -1,0 +1,17 @@
+"D:\Python environment\python35_F_sara\python35\python.exe" -m PyInstaller -F -w -i E:\favicon.ico F:\FailureAnalysisTools\main.py --add-data="D:\Python environment\python35_F_sara\python35\instantclient_19_6\*.dll;."
+
+"D:\Python environment\python35_F_sara\python35\python.exe" -m PyInstaller -F -w -i E:\favicon.ico E:\serial_rotation_shake_rate\main.py 
+
+"D:\Python environment\python35_F_sara\python35\python.exe" -m PyInstaller -F -i F:\Encrypt_tool\favicon.ico F:\FailureAnalysisTools\main.py --add-data="D:\Python environment\python35_F_sara\python35\instantclient_19_6\*.dll;."
+
+ota fa
+
+
+"D:\Python environment\python35_F_sara\python35\Scripts\pyinstaller.exe" -F -i F:\Encrypt_tool\favicon.ico F:\FailureAnalysisTools\main.py --add-data="D:\Python environment\python35_F_sara\python35\instantclient_19_6\*.dll;."
+
+
+for pip install code
+
+"D:\Python environment\python35_F_sara_1\python35\python.exe" -m pip install gprof2dot
+
+"D:\Python environment\python39\python.exe" -m pip install gprof2dot
