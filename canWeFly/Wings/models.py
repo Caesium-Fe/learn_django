@@ -38,3 +38,12 @@ class AuthorDetail(models.Model):
     tel = models.CharField(max_length=32)
     addr = models.CharField(max_length=64)
     birthday = models.DateField()
+
+
+# class NoIp(models.Model):
+#     number = models.CharField(max_length=10)
+#     ip_add = models.CharField(max_length=15)
+
+
+# class OverDutyWork(models.Model):
+

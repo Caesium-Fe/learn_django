@@ -1,3 +1,4 @@
+import math
 import threading
 import multiprocessing
 from concurrent.futures import ThreadPoolExecutor
@@ -542,3 +543,27 @@ class TestTriangleArea(TestCase):
             pre = tmp  # 必须在这次计算结果以后，才能将上次的结果保存
             result.append(a)
         print(result)
+
+    def test_search_wanmei_num(self):
+        wms = []
+        # 完美数是自身因数的和是这个数
+        for i in range(1, 10000):
+            result = 0
+            # 只需要通过这个数的平方根以下的数，就能找到所有的因数了
+            for inshu in range(1, int(math.sqrt(i))+1):
+                # 若果整除，则是因数
+                if i % inshu == 0:
+                    # 整除直接先加上这个因数
+                    result += inshu
+                    # 再来判断另外一个因数不能是1和重复值，不是直接加
+                    if inshu != 1 and i // inshu != inshu:
+                        result += i // inshu
+            if result == i:
+                wms.append(i)
+        print(wms)
+
+    def test_search_sushu(self):
+        # 素数是只有1和自身为除数的数
+        for i in range(100):
+            for j in range(i):
+                if i % j == 0 or i == 1 and:
