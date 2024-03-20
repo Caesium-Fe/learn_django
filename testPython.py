@@ -4,6 +4,7 @@ import multiprocessing
 from concurrent.futures import ThreadPoolExecutor
 import time
 from functools import wraps
+from typing import Dict
 
 from unittest import TestCase
 
@@ -532,16 +533,31 @@ class TestTriangleArea(TestCase):
         # tmp = 0
         # 前两位为固定值1，后面开始需要用到结果和前一位相加
         result = []
-        for i in range(20):
-            if i<2:
-                a = 1  # 结果
-                pre = 1  # 前一位
-                result.append(1)
-                continue
-            tmp = a  # 把上一次的结果保存下来
-            a = a + pre  # 将结果保存
-            pre = tmp  # 必须在这次计算结果以后，才能将上次的结果保存
-            result.append(a)
+        # for i in range(20):
+        #     if i<2:
+        #         a = 1  # 结果
+        #         pre = 1  # 前一位
+        #         result.append(1)
+        #         continue
+        #     tmp = a  # 把上一次的结果保存下来
+        #     a = a + pre  # 将结果保存
+        #     pre = tmp  # 必须在这次计算结果以后，才能将上次的结果保存
+        #     result.append(a)
+
+        # 生成器来实现斐波拉切数生成
+        def feibo_(n):
+            a, b = 0, 1
+            for _ in range(n):
+                yield a
+                a, b = b, a+b
+        
+        for i in feibo_(101):
+            result.append(i)
+
+        # reduce函数  不太行
+        # from functools import reduce
+        # print(reduce(lambda x,y: x+y, range(1,101)))
+
         print(result)
 
     def test_search_wanmei_num(self):
@@ -563,7 +579,270 @@ class TestTriangleArea(TestCase):
         print(wms)
 
     def test_search_sushu(self):
-        # 素数是只有1和自身为除数的数
-        for i in range(100):
-            for j in range(i):
-                if i % j == 0 or i == 1 and:
+        # res = []
+        # 素数是只有1和自身为除数的数 
+        # 纯暴力解法
+        # for i in range(1, 1001):
+        #     c = 0
+        #     for j in range(1, i+1):
+        #         if i % j == 0:
+        #             if j != 1 and i != j:
+        #                 break
+        #             else:
+        #                 c += 1
+        #         else:
+        #             ...
+        #     if c == 2:
+        #         res.append(i)
+        #     else:
+        #         ...
+        # print(res)
+        # num = 100
+        # 少一部分计算
+        resu = []
+        for j in range(2, 1001):
+            for i in range(2, int(math.sqrt(j))+1):
+                if not j % i:
+                    break
+                elif j == 2:
+                    break
+            else:
+                resu.append(j)
+        print(resu)
+        return resu
+
+    def test_for_else(self):
+        for ii in range(100):
+            if ii == 3:
+                break
+        else:
+            print(1)
+
+
+    def test_max_yue_min_bei(self):
+        # 求最大的公约数和最小的公倍数
+        a = 100
+        b = 10
+        c = min(a,b)  # 取出最小的数
+        for i in range(1, c+1):
+            tmp = 0
+            if a % i == 0 and b % i == 0:
+                tmp = tmp if i < tmp else i
+        print(tmp)
+        d = a*b  # 最大的公倍数
+        # 遍历思想解决获取公倍数
+        for i in range(1, d+1):
+            if i % a == 0 and i % b == 0:
+                print(i)
+                break
+        else:
+            print(d)
+        # 最小公倍数就是两个数的乘积除以最大公约数
+        res = d / tmp
+        print(res)
+
+    def test_huiwen(self, num):
+        # 实现判断一个数是不是回文数的函数
+        # num = 101
+        tmp = num
+        tot = 0
+        while tmp > 0:
+            tot = tot * 10 + tmp % 10
+            tmp = tmp // 10  # / 和 // 表达的意思不同，前面算出float，后面算出int
+        # print(tot == num)
+        return tot == num
+
+    def test_sushu(self):
+        res = []
+        sushu = self.test_search_sushu()
+        for i in sushu:
+            if self.test_huiwen(i):
+                res.append(i)
+        print(res)
+        # return res
+
+class Test_queue(TestCase):
+
+    def test_is_queue(self):
+        import queue
+        q1 = queue.Queue()
+        q2 = queue.Queue()
+        q1.put(1)
+        q2.put(2)
+        print(q2.get())
+
+
+class Product:
+
+    def __init__(self) -> None:
+        self.name: str = ''
+        self.price: float = 0.0
+        self.has_amount: int = 0
+
+    def __hash__(self) -> int:
+        return hash(self.has_amount)
+    
+    def __eq__(self, __value: object) -> bool:
+        if isinstance(__value, Product):
+            return self.__hash__() == __value.__hash__()
+        return False
+
+class Shop_car:
+
+    def __init__(self):
+        self.shop_car: Dict[Product, int] = {}
+
+    def add_item(self, product, buy_amount):
+        self.shop_car[product] = buy_amount
+
+    def check_out(self):
+        total_cost = 0
+        for p, a in self.shop_car.items():
+            total_cost += p.price * a
+        print(total_cost)
+
+class Test_shop_car(TestCase):
+
+    def test_add_item(self):
+        sp = Shop_car()
+        p1 = Product()
+        p1.name = 'iphone'
+        p1.price = 100
+        p1.has_amount = 10
+        p2 = Product()
+        p2.name = 'ipad'
+        p2.price = 1000
+        p2.has_amount = 10
+        sp.add_item(p1, 10)
+        sp.add_item(p2, 10)
+        print(hash(p1))
+        print(hash(p2))
+        print(hash(p2) == hash(p1))
+        my_set = {p1}
+        # 当只重写了hash函数，那么这里p2还是不在set中
+        # 原因为set虽然用hash来排序，但是判断是否在其中，
+        # 还会比对eq方法的返回值，所以这里会是False
+        print(p2 in my_set)
+        # return sp
+
+    def test_check_out(self):
+        sp = self.test_add_item()
+        sp.check_out()
+
+
+class Test_str(TestCase):
+
+    def test_string(self):
+        str1 = 'wu,Han'
+        print(str1.capitalize())
+
+    def test_for_prt(self):
+        print('buy {0} is costing {1} rmb'.format('asd', 1000))
+        print('buy %s is costing %d rmb' % ('asd', 1000))
+
+
+    def test_list(self):
+        p1 = Product()
+        p1.name = 'phone'
+        p2 = Product()
+        p2.name = 'pad'
+        l1 = [p1, p2]
+        # l1 = (p1, p2)  # 元组也没用，还是会被修改
+        # l2 = [p1, p2]
+        # from copy import deepcopy
+        # l2 = deepcopy(l1)
+        l2 = l1
+        # l2 = l1[:]
+        # l2 = list(l1)
+        # l2 = l1.copy()
+        # l1[1].name = 'xiaochou'
+        l3 = self.xiu_gai(l1)
+        print(l1[1].name)
+        print(l2[1].name)
+        print(l3[1].name)
+
+    def xiu_gai(self, l):
+        l1 = l
+        l1[1].name = 'xiaochou'
+        return l1
+    
+    def test_set_s(self):
+        a = set((1,2,3,4,5,6))
+        a.discard(1)
+        a.remove(2)
+        a.update([1,2,3])
+        a.pop()
+        print(a)
+
+    def test_set_c(self):
+        a = set((1,2,3,4,5,6))
+        b = set((3,4,5,6,7,8))
+        print(a-b)  # 单边差集
+        print(a.difference(b))
+        print(a.symmetric_difference(b)) # 双边差集W
+        print(a^b)
+        print(a|b)  # 并集
+        print(a.union(b))
+        print(a&b)  # 交集
+        print(a.intersection(b))
+
+    def test_paoma(self):
+        import os
+        st = "123"
+        for _ in range(100):
+            os.system('cls')
+            print(st)
+            time.sleep(0.2)
+            st = st[1:] + st[0]
+
+    def test_yanzhengma(self):
+        """
+        生成指定长度的验证码
+
+        :param code_len: 验证码的长度(默认4个字符)
+
+        :return: 由大小写英文字母和数字构成的随机验证码
+        """
+        import random
+        code_len = 4
+        all_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        last_pos = len(all_chars) - 1
+        code = ''
+        for _ in range(code_len):
+            index = random.randint(0, last_pos)
+            code += all_chars[index]
+        return code
+
+    def test_jidu(self):
+        total = [True] * 30
+        index = 1
+        drop_index = set()
+        # for i in range(1, 31):
+        #     if index != 9:
+        #         index += 1
+        #     else:
+        #         index = 1
+        #         drop_index.add(i)
+        #     if len(drop_index) == 15:
+        #         break
+        i = 0
+        while len(drop_index) < 15:
+            if total[i]:
+                if index == 9:
+                    index = 1
+                    total[i] = False
+                    drop_index.add(i)
+                index += 1
+            i += 1
+            i = i % 30
+        print(list(drop_index))
+
+class Test_re(TestCase):
+
+    def test_re(self):
+        import re
+        #需要筛选 所有以0开头，后面跟着2-3个数字，然后是一个连字号“-”，最后是7或8位数字的字符串
+        str_1 = 'asd028-12345678或0813-7654321asd'
+        re_c = re.compile('0\d{2,3}-\d{7,8}')
+        print(re.search(re_c, str_1))
+
