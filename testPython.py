@@ -846,3 +846,67 @@ class Test_re(TestCase):
         re_c = re.compile('0\d{2,3}-\d{7,8}')
         print(re.search(re_c, str_1))
 
+class Test_multiprocess(TestCase):
+
+    @staticmethod
+    def down_load(filename):
+        from random import randint
+        from os import getpid
+        from time import sleep
+        print('启动下载进程，进程号[%d].' % getpid())
+        print('开始下载%s...' % filename)
+        time_to_download = randint(5, 10)
+        sleep(time_to_download)
+        print('%s下载完成! 耗费了%d秒' % (filename, time_to_download))
+
+    def test_download(self):
+        from time import time
+        t1 = time()
+        # 1.创建进程的 multiprocessing的pool 方法
+        # from multiprocessing import Pool
+        # with Pool() as pool:
+            # results = pool.map(self.down_load, ('asd.txt', 'ddd.txt'))
+            # for result in results:
+            #     print(result)
+        # 2.创建进程的 concurrent.futures的ProcessPoolExecutor 方法
+        from concurrent.futures import ProcessPoolExecutor
+        import os
+        with ProcessPoolExecutor(min(32, int(os.cpu_count() * 65/100) or 1)) as executor:  # 甚至可以指定核心数量
+            results = executor.map(self.down_load, ['asd.txt', 'ddd.txt'])
+            # futures = [executor.submit(self.down_load, i) for i in ['asd.txt', 'ddd.txt']]
+            # for future in futures:
+            #     print(future.result())
+        t2 = time()
+        print('total cost time {0}'.format(t2-t1))
+
+    @staticmethod
+    def sub_task(args):
+        queue, string = args  # 这里需要把传递进来的args解开后进行使用
+        import time
+        while True:
+            a = queue.get()
+            if a >= 10:
+                # 这里不把计数的值再次放入队列，别的进程无法正常结束
+                queue.put(a)
+                break
+            print(string)
+            queue.put(a + 1)
+            time.sleep(0.02)
+    
+    def test_jinchengtongxin(self):
+        from multiprocessing import Pool, Manager
+        man = Manager()
+        queue = man.Queue()  # 这里无法直接创建队列用于进程通信，需要创建manager对象后，再创建队列
+        queue.put(0)
+        args = [(queue, i) for i in ['Ping', 'Pong']]
+        with Pool() as pool:
+            pool.map(self.sub_task, args)  # 这里的参数没有办法传递两个，所以只能拼成args
+            # pool.map(self.sub_task, (queue, queue), ('Ping', 'Pong'))
+        # Process.daemon = True
+        # Process(target=self.sub_task, args=(queue, 'Ping',)).start()
+        # Process(target=self.sub_task, args=(queue, 'Pong',)).start()
+
+        
+        
+
+
