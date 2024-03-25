@@ -907,6 +907,60 @@ class Test_multiprocess(TestCase):
         # Process(target=self.sub_task, args=(queue, 'Pong',)).start()
 
         
-        
+    def test_jicheng(self):
+        from threading import Thread
+        import time
+        class MultiDown(Thread):
+
+            def run(self) -> None:
+                time.sleep(3)
+                print('finish...')
+                # return super().run()
+
+        print(time.time())
+        # 守护线程的作用是当主程序结束时，子线程直接结束。当不设为守护线程，则主程序结束，子线程任然会执行完毕。
+        # MultiDown(daemon=False).start()
+        MultiDown(daemon=True).start()
+        # time.sleep(4)
+        print(time.time())
+
+    @staticmethod
+    def count(args):
+        list1, queue1 = args
+        tmp = 0
+        for i in list1:
+            tmp += i
+        queue1.put(tmp)
+
+    def test_fen_ren_wu(self):
+        from multiprocessing import Pool, Manager, Queue
+        import os
+
+        cpu_num = os.cpu_count()
+        total_list = [x for x in range(1,1000001)]
+        total = 0
+        for i in total_list:
+            total += i
+        print(total)
+        # renwu_list = [total_list[]]
+        renwu_list = []
+        for i in range(cpu_num+1):
+            renwu_list.append(total_list[i*int(len(total_list)/cpu_num): (i+1)*int(len(total_list)/cpu_num)])
+        man = Manager()
+        queue1 = man.Queue()
+        args = [(list1, queue1) for list1 in renwu_list]
+        with Pool(cpu_num) as pool:
+            # pool.map(self.count, args)
+            # pool.map(lambda args: count(*args), [(list1, queue1) for list1 in renwu_list])  # 并不能序列化(pickle) lambda函数
+            pool.map(self.count, [(list1, queue1) for list1 in renwu_list])
+        total = 0
+        while not queue1.empty():
+            total += queue1.get()
+        print(total)
+
+    # DrissionPage 爬虫技术代替selenium技术
+
+    # 看到 https://github.com/jackfrued/Python-100-Days/blob/master/Day01-15/14
+    # 的多线程服务端位置
 
 
