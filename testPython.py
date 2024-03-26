@@ -960,7 +960,248 @@ class Test_multiprocess(TestCase):
 
     # DrissionPage 爬虫技术代替selenium技术
 
-    # 看到 https://github.com/jackfrued/Python-100-Days/blob/master/Day01-15/14
-    # 的多线程服务端位置
+    def test_smtp(self):
+        from smtplib import SMTP
+        from email.header import Header
+        from email.mime.text import MIMEText
+        # 请自行修改下面的邮件发送者和接收者
+        sender = 'abcdefg@126.com'
+        receivers = ['uvwxyz@qq.com', 'uvwxyz@126.com']
+        message = MIMEText('用Python发送邮件的示例代码.', 'plain', 'utf-8')
+        message['From'] = Header('王大锤', 'utf-8')
+        message['To'] = Header('骆昊', 'utf-8')
+        message['Subject'] = Header('示例代码实验邮件', 'utf-8')
+        smtper = SMTP('smtp.126.com')
+        # 请自行修改下面的登录口令
+        smtper.login(sender, 'secretpass')
+        smtper.sendmail(sender, receivers, message.as_string())
+        print('邮件发送完成!')
+
+    def test_smtp_fujian(self):
+        from smtplib import SMTP
+        from email.header import Header
+        from email.mime.text import MIMEText
+        from email.mime.image import MIMEImage
+        from email.mime.multipart import MIMEMultipart
+        import urllib
+
+        # 创建一个带附件的邮件消息对象
+        message = MIMEMultipart()
+
+        # 创建文本内容
+        text_content = MIMEText('附件中有本月数据请查收', 'plain', 'utf-8')
+        message['Subject'] = Header('本月数据', 'utf-8')
+        # 将文本内容添加到邮件消息对象中
+        message.attach(text_content)
+
+        # 读取文件并将文件作为附件添加到邮件消息对象中
+        with open('/Users/Hao/Desktop/hello.txt', 'rb') as f:
+            txt = MIMEText(f.read(), 'base64', 'utf-8')
+            txt['Content-Type'] = 'text/plain'
+            txt['Content-Disposition'] = 'attachment; filename=hello.txt'
+            message.attach(txt)
+        # 读取文件并将文件作为附件添加到邮件消息对象中
+        with open('/Users/Hao/Desktop/汇总数据.xlsx', 'rb') as f:
+            xls = MIMEText(f.read(), 'base64', 'utf-8')
+            xls['Content-Type'] = 'application/vnd.ms-excel'
+            xls['Content-Disposition'] = 'attachment; filename=month-data.xlsx'
+            message.attach(xls)
+
+        # 创建SMTP对象
+        smtper = SMTP('smtp.126.com')
+        # 开启安全连接
+        # smtper.starttls()
+        sender = 'abcdefg@126.com'
+        receivers = ['uvwxyz@qq.com']
+        # 登录到SMTP服务器
+        # 请注意此处不是使用密码而是邮件客户端授权码进行登录
+        # 对此有疑问的读者可以联系自己使用的邮件服务器客服
+        smtper.login(sender, 'secretpass')
+        # 发送邮件
+        smtper.sendmail(sender, receivers, message.as_string())
+        # 与邮件服务器断开连接
+        smtper.quit()
+        print('发送完成!')
+
+    def test_send_message(self):
+        import urllib.parse
+        import http.client
+        import json
+
+        host = "106.ihuyi.com"
+        sms_send_uri = "/webservice/sms.php?method=Submit"
+        # 下面的参数需要填入自己注册的账号和对应的密码
+        params = urllib.parse.urlencode({'account': '1.2..30', 
+                                         'password': '*******', 
+                                         'content': 'blablabla...',
+                                         'mobile': '13212341234',
+                                         'format': 'json',
+                                         })
+        print(params)
+        headers = {
+            'Content-type': 'application/x-www-form-urlencoded',
+            'Accept': 'text/plain',
+        }
+        conn = http.client.HTTPConnection(host, port=80, timeout=30)
+        conn.request('POST', sms_send_uri, params, headers)
+        response = conn.getresponse()
+        response_str = response.read()
+        jsonstr = response_str.decode('utf-8')
+        print(json.loads(jsonstr))
+        conn.close()
+
+class Test_jinjie(TestCase):
+
+    def test_shengchengshi(self):
+        prices = {
+            'AAPL': 191.88,
+            'GOOG': 1186.96,
+            'IBM': 149.24,
+            'ORCL': 48.44,
+            'ACN': 166.89,
+            'FB': 208.09,
+            'SYMC': 21.29
+        }
+        # 用股票价格大于100元的股票构造一个新的字典
+        prices2 = {key: value for key, value in prices.items() if value > 100}  # 字典生成式
+        print(prices2)
+        prices3 = [{key: value} for key, value in prices.items() if value > 100]  # 列表生成式
+        print(prices3)
+
+    def test_liebiaoqiantaodekeng(self):
+        names = ['关羽', '张飞', '赵云', '马超', '黄忠']
+        courses = ['语文', '数学', '英语']
+        # 录入五个学生三门课程的成绩
+        # 错误 - 参考http://pythontutor.com/visualize.html#mode=edit
+        scores = [[None] * len(courses)] * len(names)
+        # scores = [[None] * len(courses) for _ in range(len(names))]
+        for row, name in enumerate(names):
+            for col, course in enumerate(courses):
+                scores[row][col] = float(input(f'请输入{name}的{course}成绩: '))
+                print(scores)
+
+    def test_heapq(self):
+        """
+        从列表中找出最大的或最小的N个元素
+        堆结构(大根堆/小根堆)
+        """
+        import heapq
+        list1 = [34, 25, 12, 99, 87, 63, 58, 78, 88, 92]
+        list2 = [
+            {'name': 'IBM', 'shares': 100, 'price': 91.1},
+            {'name': 'AAPL', 'shares': 50, 'price': 543.22},
+            {'name': 'FB', 'shares': 200, 'price': 21.09},
+            {'name': 'HPQ', 'shares': 35, 'price': 31.75},
+            {'name': 'YHOO', 'shares': 45, 'price': 16.35},
+            {'name': 'ACME', 'shares': 75, 'price': 115.65}
+        ]
+        print(type(heapq.nlargest(3, list1)))
+        print(heapq.nlargest(3, list1))
+        print(heapq.nsmallest(3, list1))
+        print(heapq.nlargest(2, list2, key=lambda x: x['price']))
+        print(heapq.nlargest(2, list2, key=lambda x: x['shares']))
+
+    def test_itertools(self):
+        """
+        迭代工具模块
+        """
+        import itertools
+
+        # 产生ABCD的全排列
+        itertools.permutations('ABCD')
+        # 产生ABCDE的五选三组合
+        itertools.combinations('ABCDE', 3)
+        # 产生ABCD和123的笛卡尔积
+        itertools.product('ABCD', '123')
+        # 产生ABC的无限循环序列
+        itertools.cycle(('A', 'B', 'C'))
+
+        print()
+
+    def test_collections(self):
+        """
+        找出序列中出现次数最多的元素
+
+        namedtuple：命令元组，它是一个类工厂，接受类型的名称和属性列表来创建一个类。
+        deque：双端队列，是列表的替代实现。Python中的列表底层是基于数组来实现的，
+                而deque底层是双向链表，因此当你需要在头尾添加和删除元素时，deque会表现出更好的性能，渐近时间复杂度为$O(1)$。
+        Counter：dict的子类，键是元素，值是元素的计数，它的most_common()方法可以帮助我们获取出现频率最高的元素。
+                    Counter和dict的继承关系我认为是值得商榷的，按照CARP原则，Counter跟dict的关系应该设计为关联关系更为合理。
+        OrderedDict：dict的子类，它记录了键值对插入的顺序，看起来既有字典的行为，也有链表的行为。
+        defaultdict：类似于字典类型，但是可以通过默认的工厂函数来获得键对应的默认值，相比字典中的setdefault()方法，这种做法更加高效。
+        """
+        from collections import Counter
+
+        words = [
+            'look', 'into', 'my', 'eyes', 'look', 'into', 'my', 'eyes',
+            'the', 'eyes', 'the', 'eyes', 'the', 'eyes', 'not', 'around',
+            'the', 'eyes', "don't", 'look', 'around', 'the', 'eyes',
+            'look', 'into', 'my', 'eyes', "you're", 'under'
+        ]
+        counter = Counter(words)
+        print(counter.most_common(3))
+
+    def test_multi_sort_algorithm(self):
+        item_yuan = [6,3,1,6,7,8,9,9,4,3,20,21,22,35,26,15,5,]
+        """
+        简单选择排序  找到最小于当前元素的下标，然后与当前元素位置互换
+        """
+        items = item_yuan[:]
+        for i in range(len(items)-1):
+            min_index = i
+            for j in range(i+1, len(items)):
+                if items[j] < items[min_index]:
+                    min_index = j
+            items[i], items[min_index] = items[min_index], items[i]
+        print(items)
+
+        """
+        冒泡排序  两两元素比较，前大于后则，交换位置
+        """
+        items = item_yuan[:]
+        for i in range(len(items)-1):
+            for j in range(len(items)-1-i):
+                if items[j] > items[j+1]:
+                    items[j], items[j+1] = items[j+1], items[j]
+        print(items)
+
+        """
+        冒泡排序升级版(搅拌排序)
+        """
+        items = item_yuan[:]
+        for i in range(len(items) - 1):
+            swapped = False
+            for j in range(len(items) - 1 - i):
+                if items[j] > items[j + 1]:
+                    items[j], items[j + 1] = items[j + 1], items[j]
+                    swapped = True
+            if swapped:
+                swapped = False
+                for j in range(len(items) - 2 - i, i, -1):
+                    if items[j - 1] > items[j]:
+                        items[j], items[j - 1] = items[j - 1], items[j]
+                        swapped = True
+            if not swapped:
+                break
+        print(items)
+
+    def test_hebing(self):
+        """
+        两个有序数组合并成一个有序数组
+        """
+        items1 = [5,6,7,8,9]
+        items2 = [1,2,3,4,5]
+        index1,index2 = 0,0
+        result = []
+        while index1 < len(items1) or index2 < len(items2):
+            if items1[index1] > items2[index2]:
+                result.append(items1[index1])
+                index1 += 1
+            else:
+                result.append(items2[index2])
+                index2 += 1
+        print(result)
+
+
 
 
